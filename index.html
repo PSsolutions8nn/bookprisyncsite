@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prisync Solutions — AI Receptionist for Local Businesses</title>
+<meta name="description" content="Prisync builds AI receptionists for local service businesses. Catch every call and message you miss and book customers in automatically." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#0a2242;
+    --navy-deep:#06152c;
+    --navy-card:#0f2b54;
+    --navy-card-2:#112f5c;
+    --blue:#3b91cf;
+    --blue-soft:rgba(59,145,207,.14);
+    --white:#ffffff;
+    --muted:#9fb4d0;
+    --muted-dim:#6f87a8;
+    --line:rgba(255,255,255,.09);
+    --red:#e8657a;
+    --green:#5ed6a0;
+    --maxw:1120px;
+    --pad:clamp(20px,5vw,40px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--navy);
+    color:var(--white);
+    font-family:'Inter',system-ui,sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--blue);margin-bottom:18px;display:inline-block;
+  }
+  h1,h2,h3{font-family:'Sora',sans-serif;font-weight:600;letter-spacing:-.02em;line-height:1.08}
+  p{color:var(--muted)}
+  a{color:inherit;text-decoration:none}
+
+  /* buttons */
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:'Sora',sans-serif;font-weight:600;font-size:.98rem;
+    background:var(--blue);color:#04101f;
+    padding:15px 26px;border-radius:10px;
+    transition:transform .18s ease,box-shadow .18s ease;
+    box-shadow:0 10px 30px -10px rgba(59,145,207,.6);
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 16px 36px -10px rgba(59,145,207,.7)}
+  .btn-ghost{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'Sora',sans-serif;font-weight:500;font-size:.95rem;
+    color:var(--white);padding:15px 4px;
+  }
+  .btn-ghost:hover{color:var(--blue)}
+  :focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:6px}
+
+  /* nav */
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(6,21,44,.72);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .brand{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:.86rem;letter-spacing:.12em;color:var(--white)}
+  .brand b{color:var(--blue)}
+  .nav-links{display:flex;align-items:center;gap:30px}
+  .nav-links a.lnk{font-size:.92rem;color:var(--muted);transition:color .15s}
+  .nav-links a.lnk:hover{color:var(--white)}
+  .nav-cta{font-family:'Sora',sans-serif;font-weight:600;font-size:.88rem;background:var(--blue);color:#04101f;padding:9px 18px;border-radius:8px}
+  .nav-cta:hover{filter:brightness(1.06)}
+
+  /* hero */
+  .hero{padding:clamp(56px,9vw,104px) 0 clamp(48px,7vw,84px);position:relative}
+  .hero::before{
+    content:"";position:absolute;top:-120px;left:50%;transform:translateX(-50%);
+    width:760px;height:520px;max-width:120vw;
+    background:radial-gradient(ellipse at center,rgba(59,145,207,.22),transparent 62%);
+    pointer-events:none;z-index:0;
+  }
+  .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(36px,5vw,72px);align-items:center}
+  .hero h1{font-size:clamp(2.1rem,4.6vw,3.5rem);font-weight:700;margin-bottom:22px}
+  .hero h1 .hl{color:var(--blue)}
+  .hero p.lede{font-size:clamp(1.04rem,1.5vw,1.18rem);max-width:34ch;margin-bottom:32px}
+  .hero-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .hero-trust{margin-top:30px;font-size:.78rem;color:var(--muted-dim);letter-spacing:.04em}
+
+  /* signature feed */
+  .feed{
+    background:linear-gradient(180deg,var(--navy-card),var(--navy-card-2));
+    border:1px solid var(--line);border-radius:16px;
+    padding:22px;box-shadow:0 40px 80px -40px rgba(0,0,0,.7);
+  }
+  .feed-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+  .feed-head .ttl{font-family:'JetBrains Mono',monospace;font-size:.74rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+  .live-dot{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--green);letter-spacing:.1em}
+  .live-dot i{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(94,214,160,.6);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(94,214,160,.5)}70%{box-shadow:0 0 0 7px rgba(94,214,160,0)}100%{box-shadow:0 0 0 0 rgba(94,214,160,0)}}
+  .feed-row{display:flex;gap:12px;padding:9px 0;font-size:.86rem;opacity:0;transform:translateY(6px);transition:opacity .5s ease,transform .5s ease}
+  .feed-row.on{opacity:1;transform:none}
+  .feed-row .t{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted-dim);min-width:42px;padding-top:2px}
+  .feed-row .body{color:var(--white)}
+  .feed-row .body .tag{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:5px;margin-right:8px}
+  .tag-miss{background:rgba(232,101,122,.16);color:var(--red)}
+  .tag-ai{background:var(--blue-soft);color:var(--blue)}
+  .tag-cust{background:rgba(255,255,255,.08);color:var(--muted)}
+  .tag-book{background:rgba(94,214,160,.15);color:var(--green)}
+  .feed-foot{margin-top:16px;padding-top:16px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+  .feed-foot .stamp{font-family:'Sora',sans-serif;font-weight:600;font-size:.92rem;color:var(--green)}
+  .feed-foot .meta{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted-dim)}
+
+  /* proof strip */
+  .strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--navy-deep)}
+  .strip-inner{display:flex;flex-wrap:wrap;gap:10px 34px;justify-content:center;padding:20px 0;font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.06em;color:var(--muted)}
+  .strip-inner span b{color:var(--blue);font-weight:600;margin-right:8px}
+
+  /* generic section */
+  .section{padding:clamp(60px,9vw,108px) 0}
+  .section h2{font-size:clamp(1.7rem,3.4vw,2.6rem);max-width:18ch;margin-bottom:20px}
+  .section .lead{font-size:clamp(1.02rem,1.4vw,1.14rem);max-width:52ch}
+
+  /* problem */
+  .leak{background:var(--navy-deep)}
+  .leak .lead{max-width:46ch}
+
+  /* case study */
+  .case-head{max-width:62ch}
+  .build-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:48px}
+  .build-card{background:var(--navy-card);border:1px solid var(--line);border-radius:14px;padding:26px 24px;transition:border-color .2s,transform .2s}
+  .build-card:hover{border-color:rgba(59,145,207,.5);transform:translateY(-3px)}
+  .build-card .num{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--blue);letter-spacing:.1em;margin-bottom:14px}
+  .build-card h3{font-size:1.12rem;margin-bottom:10px;font-weight:600}
+  .build-card p{font-size:.94rem}
+  .outcome{margin-top:36px;display:flex;flex-wrap:wrap;gap:12px}
+  .pill{font-family:'JetBrains Mono',monospace;font-size:.8rem;letter-spacing:.04em;color:var(--white);background:var(--blue-soft);border:1px solid rgba(59,145,207,.3);padding:9px 16px;border-radius:999px}
+  .quote{margin-top:44px;border-left:2px solid var(--blue);padding:6px 0 6px 26px;max-width:50ch}
+  .quote p{font-family:'Sora',sans-serif;font-weight:500;font-size:1.18rem;color:var(--white);font-style:italic;line-height:1.4}
+  .quote .who{margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:.74rem;color:var(--muted-dim);letter-spacing:.06em}
+  .ph{color:var(--muted-dim);font-style:italic}
+
+  /* second proof */
+  .range{background:var(--navy-deep)}
+  .range-card{display:flex;gap:22px;align-items:flex-start;background:var(--navy-card);border:1px solid var(--line);border-radius:14px;padding:30px;max-width:760px}
+  .range-card .badge{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.1em;color:var(--blue);white-space:nowrap;padding-top:4px}
+  .range-card h3{font-size:1.2rem;margin-bottom:8px;font-weight:600}
+  .range-card p{font-size:.96rem}
+
+  /* offer */
+  .offer-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;margin-top:10px}
+  .offer-list{list-style:none;margin-top:8px}
+  .offer-list li{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--line);font-size:1rem;color:var(--white)}
+  .offer-list li::before{content:"";flex:0 0 auto;width:18px;height:18px;margin-top:3px;border-radius:5px;background:var(--blue-soft);border:1px solid var(--blue);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b91cf' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center;background-size:12px}
+  .price-card{background:linear-gradient(180deg,var(--navy-card),var(--navy-card-2));border:1px solid rgba(59,145,207,.35);border-radius:18px;padding:34px;text-align:center;box-shadow:0 40px 80px -44px rgba(0,0,0,.8)}
+  .price-card .label{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+  .price-card .price{font-family:'Sora',sans-serif;font-weight:700;font-size:2.4rem;letter-spacing:-.02em}
+  .price-card .price small{display:block;font-size:1.06rem;font-weight:500;color:var(--blue);margin-top:6px}
+  .price-card .btn{margin-top:24px;width:100%;justify-content:center}
+  .price-card .scarcity{margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:.74rem;color:var(--muted-dim);line-height:1.5}
+  .price-card .scarcity b{color:var(--white);font-weight:600}
+
+  /* also-build */
+  .also{border-top:1px solid var(--line);background:var(--navy-deep)}
+  .also-inner{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;justify-content:center;padding:22px 0;font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--muted);letter-spacing:.04em}
+  .also-inner .k{color:var(--muted-dim)}
+  .also-inner .d{color:var(--white)}
+
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:48px}
+  .step .n{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--blue);letter-spacing:.1em;padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:18px}
+  .step h3{font-size:1.14rem;margin-bottom:10px;font-weight:600}
+  .step p{font-size:.94rem}
+
+  /* final cta */
+  .final{text-align:center;background:radial-gradient(ellipse at top,rgba(59,145,207,.16),transparent 60%),var(--navy)}
+  .final h2{margin:0 auto 26px;max-width:20ch}
+  .final .contact{margin-top:30px;display:flex;flex-wrap:wrap;gap:8px 28px;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--muted)}
+  .final .contact a{color:var(--muted)}
+  .final .contact a:hover{color:var(--blue)}
+
+  /* footer */
+  footer.foot{border-top:1px solid var(--line);background:var(--navy-deep)}
+  .foot-inner{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:26px 0;font-family:'JetBrains Mono',monospace;font-size:.74rem;color:var(--muted-dim);letter-spacing:.06em}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  /* responsive */
+  @media (max-width:860px){
+    .hero-grid{grid-template-columns:1fr;gap:40px}
+    .hero p.lede{max-width:42ch}
+    .build-grid{grid-template-columns:1fr}
+    .offer-grid{grid-template-columns:1fr;gap:34px}
+    .steps{grid-template-columns:1fr}
+    .nav-links a.lnk{display:none}
+    .range-card{flex-direction:column;gap:14px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .reveal,.feed-row{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top">PRISYNC<b>·</b>SOLUTIONS</a>
+    <nav class="nav-links">
+      <a class="lnk" href="#case">Case study</a>
+      <a class="lnk" href="#offer">The offer</a>
+      <a class="nav-cta" href="https://calendly.com/prisyncsolutions/15" target="_blank" rel="noopener">Book a call</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">AI Solutions · London</span>
+        <h1><span class="hl">Always on</span>, so you don't have to be.</h1>
+        <p class="lede">Prisync builds AI receptionists for local service businesses. When you're with a client or closed for the night, it answers, replies in your voice, and fills your calendar, so you stop losing bookings to voicemail.</p>
+        <div class="hero-actions">
+          <a class="btn" href="https://calendly.com/prisyncsolutions/15" target="_blank" rel="noopener">Book a 15-min call →</a>
+          <a class="btn-ghost" href="#case">See our 2 most recent builds ↓</a>
+        </div>
+        <p class="hero-trust mono">BUILT FOR TRADES · BARBERS · SALONS · CLINICS</p>
+      </div>
+
+      <!-- SIGNATURE: live front-desk feed -->
+      <div class="feed" id="feed" aria-label="Example of the AI receptionist catching a missed call and booking a customer">
+        <div class="feed-head">
+          <span class="ttl">Front desk</span>
+          <span class="live-dot"><i></i>LIVE</span>
+        </div>
+        <div class="feed-rows">
+          <div class="feed-row"><span class="t">18:42</span><span class="body"><span class="tag tag-miss">Missed</span>Incoming call rang out, no one's available</span></div>
+          <div class="feed-row"><span class="t">18:42</span><span class="body"><span class="tag tag-ai">AI</span>"Hey! Sorry we missed you, want me to get you booked in?"</span></div>
+          <div class="feed-row"><span class="t">18:43</span><span class="body"><span class="tag tag-cust">Client</span>"Yeah — Saturday around 2?"</span></div>
+          <div class="feed-row"><span class="t">18:43</span><span class="body"><span class="tag tag-book">Booked</span>Saturday 14:00 confirmed · added to calendar</span></div>
+        </div>
+        <div class="feed-foot">
+          <span class="stamp">Captured ✓</span>
+          <span class="meta">0 bookings lost</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROOF STRIP -->
+  <div class="strip">
+    <div class="wrap strip-inner">
+      <span><b>→</b>Custom tone and voice</span>
+      <span><b>→</b>Every enquiry logged</span>
+      <span><b>→</b>Calendar run by text</span>
+      <span><b>→</b>Works after hours</span>
+    </div>
+  </div>
+
+  <!-- PROBLEM -->
+  <section class="section leak reveal">
+    <div class="wrap">
+      <span class="eyebrow">The leak</span>
+      <h2>A missed call is a booking you never knew you lost.</h2>
+      <p class="lead">You're working, or just away from your phone. The call rings out and the message sits unread, so that customer books somewhere else and you never see it happen. It just shows up as a quieter week. An AI receptionist closes the gap the moment it opens.</p>
+    </div>
+  </section>
+
+  <!-- CASE STUDY 01 -->
+  <section class="section" id="case">
+    <div class="wrap">
+      <div class="case-head reveal">
+        <span class="eyebrow">Case study · 01</span>
+        <h2>JTFadeIt — fully booked, drowning in messages.</h2>
+        <p class="lead">He couldn't cut hair and keep up with client messages at the same time. Enquiries went cold, the schedule got messy, and bookings slipped whenever he couldn't reach his phone.</p>
+      </div>
+
+      <div class="build-grid">
+        <div class="build-card reveal">
+          <div class="num">01 · Booking assistant</div>
+          <h3>Replies instantly, in his voice</h3>
+          <p>A two-way assistant answers every inbound client message in his exact tone, trained on his real chat history, so customers can't tell it isn't him.</p>
+        </div>
+        <div class="build-card reveal">
+          <div class="num">02 · Client memory</div>
+          <h3>Knows who's who</h3>
+          <p>Captures and stores every client's details automatically: who's new, who's returning, who recently cancelled, who's already paid.</p>
+        </div>
+        <div class="build-card reveal">
+          <div class="num">03 · Telegram control</div>
+          <h3>Runs his calendar by text</h3>
+          <p>He confirms, edits and reschedules his whole week through a private Telegram assistant, with no app to open between clients.</p>
+        </div>
+      </div>
+
+      <div class="outcome reveal">
+        <span class="pill">More bookings captured</span>
+        <span class="pill">Cleaner schedule</span>
+        <span class="pill">Hours of admin removed</span>
+      </div>
+
+      <!-- QUOTE SLOT: swap placeholder for the barber's real line once approved -->
+      <div class="quote reveal">
+        <p>“After we integrated this I felt like I wasn't working, and when I was, it was on what the business is actually built on, instead of being clerks and hiring receptionists.”</p>
+        <div class="who">Jason · JTFadeIt</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE STUDY 02 -->
+  <section class="section range" id="case2">
+    <div class="wrap">
+      <div class="case-head reveal">
+        <span class="eyebrow">Case study · 02</span>
+        <h2>Argyle Square Property, plenty of leads and no time to qualify them.</h2>
+        <p class="lead">Lettings enquiries came in faster than the team could work them. Forms piled up, and qualifying each lead by hand ate the hours that should have gone into closing.</p>
+      </div>
+
+      <div class="build-grid">
+        <div class="build-card reveal">
+          <div class="num">01 · Instant outreach</div>
+          <h3>Calls leads the moment they land</h3>
+          <p>An outbound voice agent rings every new lead the second they submit a form, before the enquiry ever goes cold.</p>
+        </div>
+        <div class="build-card reveal">
+          <div class="num">02 · Live qualification</div>
+          <h3>Asks the right questions</h3>
+          <p>It qualifies each lead on the call, capturing budget, timeline and lettings criteria in a real, human voice.</p>
+        </div>
+        <div class="build-card reveal">
+          <div class="num">03 · Clean handover</div>
+          <h3>Only the leads worth your time</h3>
+          <p>Qualified leads pass to the team with every detail captured, so they only speak to people genuinely worth a call.</p>
+        </div>
+      </div>
+
+      <div class="outcome reveal">
+        <span class="pill">Leads worked instantly</span>
+        <span class="pill">Qualification off the team's plate</span>
+        <span class="pill">No enquiry goes cold</span>
+      </div>
+
+      <div class="quote reveal">
+        <p>“Great addition to the business, and it's making our lettings qualification much easier.”</p>
+        <div class="who">The Argyle Square Property team</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OFFER -->
+  <section class="section" id="offer">
+    <div class="wrap">
+      <span class="eyebrow reveal">The offer</span>
+      <div class="offer-grid">
+        <div class="reveal">
+          <h2 style="margin-bottom:24px">Your AI receptionist, live in days.</h2>
+          <ul class="offer-list">
+            <li>Answers every call and message you or your front desk miss</li>
+            <li>Replies instantly in your business's own voice</li>
+            <li>Books the customer straight into your calendar</li>
+            <li>Texts or calls them back to confirm automatically</li>
+            <li>Works after hours, weekends, and when you're flat out</li>
+          </ul>
+        </div>
+        <div class="price-card reveal">
+          <p style="font-family:'Sora',sans-serif;font-weight:600;font-size:1.32rem;line-height:1.3;color:var(--white);margin-bottom:22px">Built around your business, live in days.</p>
+          <a class="btn" href="https://calendly.com/prisyncsolutions/15" target="_blank" rel="noopener">Book a 15-min call →</a>
+          <p class="scarcity">Taking on <b>3 clients</b> this month at a locked-in founding rate before prices rise. Pricing is covered on the call.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ALSO BUILD (understated) -->
+  <div class="also">
+    <div class="wrap also-inner">
+      <span class="k">Also build ·</span>
+      <span class="d">Chatbots</span><span class="k">·</span>
+      <span class="d">Automations</span><span class="k">·</span>
+      <span class="d">Websites</span><span class="k">·</span>
+      <span class="d">Custom AI builds</span>
+    </div>
+  </div>
+
+  <!-- STEPS -->
+  <section class="section reveal">
+    <div class="wrap">
+      <span class="eyebrow">How it works</span>
+      <h2>From first call to catching bookings.</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="n">STEP 01</div>
+          <h3>Discovery</h3>
+          <p>A quick call to map exactly where your calls and messages leak, and what a booking is worth to you.</p>
+        </div>
+        <div class="step">
+          <div class="n">STEP 02</div>
+          <h3>Build</h3>
+          <p>We set the receptionist up to your workflow and voice, connected to your calendar and channels.</p>
+        </div>
+        <div class="step">
+          <div class="n">STEP 03</div>
+          <h3>Live</h3>
+          <p>It starts catching bookings within days. We monitor and refine so it only gets sharper.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="section final" id="book">
+    <div class="wrap">
+      <span class="eyebrow reveal">Stop the leak</span>
+      <h2 class="reveal">Be there for every customer, even when you can't be.</h2>
+      <p class="lead reveal" style="margin:0 auto 6px">Book a 15-minute call and I'll show you the receptionist working live. No pitch. If it's not useful for your business, you'll know in ten minutes.</p>
+      <div class="reveal" style="margin-top:30px">
+        <!-- SWAP href for your Cal.com / Calendly link -->
+        <a class="btn" href="https://calendly.com/prisyncsolutions/15" target="_blank" rel="noopener">Book a 15-min call →</a>
+      </div>
+      <div class="contact reveal">
+        <a href="mailto:info@prisyncsolutions.com">info@prisyncsolutions.com</a>
+        <a href="tel:+447467316192">+44 7467 316192</a>
+        <span>United Kingdom</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <span>PRISYNC · SOLUTIONS</span>
+    <span>© 2026 · Smarter systems for service businesses</span>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.16});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // Signature feed: reveal rows in sequence, loop gently
+  const feed = document.getElementById('feed');
+  const rows = feed ? [...feed.querySelectorAll('.feed-row')] : [];
+  const foot = feed ? feed.querySelector('.feed-foot') : null;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function runFeed(){
+    rows.forEach(r=>r.classList.remove('on'));
+    if(foot) foot.style.opacity = .35;
+    rows.forEach((r,i)=> setTimeout(()=>r.classList.add('on'), 500 + i*900));
+    setTimeout(()=>{ if(foot) foot.style.opacity = 1; }, 500 + rows.length*900);
+  }
+  if(feed){
+    if(reduce){ rows.forEach(r=>r.classList.add('on')); }
+    else {
+      const feedIO = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{ if(e.isIntersecting){ runFeed(); setInterval(runFeed, 500 + rows.length*900 + 4200); feedIO.disconnect(); } });
+      },{threshold:.4});
+      feedIO.observe(feed);
+    }
+  }
+</script>
+</body>
+</html>
